@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Die schnellste Weihnachtsfeier der Stadt</title>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#163b2b"/>
+      <stop offset="1" stop-color="#06100c"/>
+    </linearGradient>
+    <linearGradient id="tree" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#70d69a"/>
+      <stop offset="0.55" stop-color="#168052"/>
+      <stop offset="1" stop-color="#073b29"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#background)"/>
+  <path d="M32 8l3 7h7l-5.5 4.5 2 7-6.5-4-6.5 4 2-7L22 15h7z" fill="#ffd98a" stroke="#fff8eb" stroke-width="1" stroke-linejoin="round"/>
+  <path d="M32 19L19 38h7l-11 13h34L38 38h7z" fill="url(#tree)" stroke="#fff8eb" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M28 51v5h8v-5" fill="#b58a4c"/>
+  <circle cx="27" cy="35" r="2" fill="#ff4168"/>
+  <circle cx="38" cy="42" r="2" fill="#ffd98a"/>
+  <circle cx="32" cy="28" r="2" fill="#fff8eb"/>
+  <path d="M12 57h40" stroke="#64ffb0" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
