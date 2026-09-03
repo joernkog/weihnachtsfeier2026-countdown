@@ -41,21 +41,21 @@ h1 {
   text-shadow:
     0 2px 0 #10251b,
     0 0 14px rgba(var(--neon-rgb), 0.14);
-  animation: neon-sign 7s ease-in-out infinite;
+  animation: neon-sign 3s ease-in-out infinite;
 }
 
 .flash {
   display: inline-block;
   margin-right: 1.5rem;
   font-size: clamp(3rem, 10vw, 6rem);
-  line-height: 1.05;
+  line-height: 1.1;
   color: var(--neon);
   -webkit-text-fill-color: var(--neon);
   text-shadow:
     2px 2px 0 #10251b,
-    0 0 14px rgba(var(--neon-rgb), 0.3),
+    0 0 14px rgba(var(--neon-rgb), 0.2),
     0 0 28px rgba(var(--neon-rgb), 0.22);
-  animation: neon-shadow-pulse 5.5s ease-in-out infinite;
+  animation: neon-shadow-pulse 3s ease-in-out infinite;
 }
 
 .layout {
@@ -64,7 +64,8 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
   align-items: start;
-  gap: var(--space-stack);
+  column-gap: clamp(1.5rem, 4vw, 3rem);
+  row-gap: var(--space-stack);
   max-width: 1500px;
   margin: 0 auto;
 }

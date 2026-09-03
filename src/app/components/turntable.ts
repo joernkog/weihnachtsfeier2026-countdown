@@ -20,6 +20,12 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     <section class="deck">
       <div class="embed"><div #holder></div></div>
 
+      <div class="controls">
+        <button type="button" class="play" (click)="toggle()">
+          {{ playing() ? '❚❚ Pause' : '▶ Play' }}
+        </button>
+      </div>
+
       <div class="platter" [class.spinning]="playing()">
         <div class="vinyl" [style.background-image]="recordStyle()">
           <div class="grooves"></div>
@@ -34,12 +40,6 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
         <div class="arm" [class.on-record]="playing()">
           <div class="head"></div>
         </div>
-      </div>
-
-      <div class="controls">
-        <button type="button" class="play" (click)="toggle()">
-          {{ playing() ? '❚❚ Pause' : '▶ Play' }}
-        </button>
       </div>
 
       @if (error(); as message) {
@@ -202,7 +202,7 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
       display: flex;
       align-items: center;
       gap: 1rem;
-      margin-top: 2rem;
+      margin: 1rem 0;
     }
 
     .play {
@@ -216,6 +216,7 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
       border-radius: 999px;
       cursor: pointer;
       box-shadow: 0 0 22px rgba(var(--neon-rgb), 0.5);
+      will-change: box-shadow;
     }
 
     .play:disabled {

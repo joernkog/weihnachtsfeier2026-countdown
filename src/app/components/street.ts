@@ -57,6 +57,7 @@ interface Car {
       height: 130px;
       width: 100%;
       overflow: hidden;
+      contain: layout paint;
       pointer-events: none;
       z-index: 5;
     }
@@ -66,6 +67,7 @@ interface Car {
       inset: 0;
       z-index: 2;
       overflow: hidden;
+      contain: layout paint;
     }
 
     .asphalt {
@@ -90,6 +92,7 @@ interface Car {
         transparent 60px 130px
       );
       animation: dash 0.9s linear infinite;
+      will-change: translate;
     }
 
     .car {
@@ -98,7 +101,8 @@ interface Car {
       transform: scale(var(--scale));
       transform-origin: bottom left;
       animation: race var(--duration) linear var(--delay) infinite;
-      filter: blur(0.1px) drop-shadow(0 7px 12px rgba(0, 0, 0, 0.8));
+      filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.72));
+      will-change: translate;
     }
 
     .trail {
@@ -110,7 +114,8 @@ interface Car {
       border-radius: 999px;
       background: linear-gradient(90deg, transparent, rgba(235, 222, 187, 0.58));
       opacity: 0.28;
-      filter: blur(4px);
+      filter: blur(2px);
+      will-change: translate;
     }
 
     @keyframes race {
