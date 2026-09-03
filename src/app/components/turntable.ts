@@ -1,0 +1,349 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { SPOTIFY_PLAYLIST_ID } from '../config';
+import { PlaylistService } from '../services/playlist.service';
+import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embed.service';
+
+@Component({
+  selector: 'app-turntable',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <section class="deck">
+      <div class="embed"><div #holder></div></div>
+
+      <div class="platter" [class.spinning]="playing()">
+        <div class="vinyl" [style.background-image]="recordStyle()">
+          <div class="grooves"></div>
+          <div class="label">
+            @if (track(); as t) {
+              <strong>{{ t.title }}</strong>
+              <span>{{ t.artist }}</span>
+            }
+          </div>
+          <div class="spindle"></div>
+        </div>
+        <div class="arm" [class.on-record]="playing()">
+          <div class="head"></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="play" (click)="toggle()">
+          {{ playing() ? '❚❚ Pause' : '▶ Play' }}
+        </button>
+      </div>
+
+      @if (error(); as message) {
+        <p class="error">{{ message }}</p>
+      }
+    </section>
+  `,
+  styles: `
+    :host {
+      display: block;
+    }
+
+    .deck {
+      display: grid;
+      justify-items: center;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .platter {
+      position: relative;
+      width: min(74vw, 420px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, #26282d 0 46%, #17181c 46% 100%);
+      box-shadow:
+        0 0 0 10px #0e0f12,
+        0 0 60px rgba(var(--neon-rgb), 0.2),
+        0 30px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .vinyl {
+      position: absolute;
+      inset: 6%;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 34% 26%,
+        #727a73 0 2%,
+        #343b36 9%,
+        #171c19 30%,
+        #070908 67%,
+        #4d564f 100%
+      );
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border: 1px solid rgba(205, 214, 202, 0.4);
+      box-shadow:
+        inset 0 0 0 5px rgba(0, 0, 0, 0.42),
+        inset 16px 10px 24px rgba(255, 255, 255, 0.08),
+        0 0 0 2px rgba(0, 0, 0, 0.65);
+      animation: spin 1.8s linear infinite;
+      animation-play-state: paused;
+      overflow: hidden;
+    }
+
+    .platter.spinning .vinyl {
+      animation-play-state: running;
+    }
+
+    .grooves {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        linear-gradient(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.12)),
+        repeating-radial-gradient(
+          circle at 50% 50%,
+          rgba(215, 225, 214, 0.15) 0 1px,
+          transparent 1px 5px
+        );
+      mask: radial-gradient(circle at 50% 50%, transparent 0 29%, #000 29% 100%);
+    }
+
+    .label {
+      position: absolute;
+      inset: 32%;
+      border-radius: 50%;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 0.2rem;
+      padding: 0.5rem;
+      text-align: center;
+      background: radial-gradient(
+        circle,
+        rgba(15, 15, 15, 0.78) 0 42%,
+        rgba(15, 15, 15, 0.52) 43% 100%
+      );
+      color: #fff;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.55);
+    }
+
+    .label::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .label strong {
+      position: relative;
+      z-index: 1;
+      font-size: 0.8rem;
+      line-height: 1.1;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .label span {
+      position: relative;
+      z-index: 1;
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+
+    .spindle {
+      position: absolute;
+      inset: calc(50% - 5px);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d7d7d7;
+    }
+
+    .arm {
+      position: absolute;
+      top: 6%;
+      right: 4%;
+      width: 12px;
+      height: 46%;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #e6e6e6, #8d8d8d);
+      transform-origin: top center;
+      transform: rotate(-38deg);
+      transition: transform 0.8s ease;
+    }
+
+    .arm.on-record {
+      transform: rotate(38deg);
+    }
+
+    .arm .head {
+      position: absolute;
+      bottom: -14px;
+      left: -6px;
+      width: 24px;
+      height: 22px;
+      border-radius: 4px;
+      background: #1c1c1c;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .play {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      padding: 0.6rem 1.6rem;
+      color: #04120b;
+      font-weight: 500;
+      background: var(--neon);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 22px rgba(var(--neon-rgb), 0.5);
+    }
+
+    .play:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .error {
+      margin: 0;
+      color: var(--hot);
+      font-size: 0.8rem;
+    }
+
+    .embed {
+      width: min(100%, 460px);
+      min-width: 0;
+      min-height: 80px;
+    }
+
+    .embed > div,
+    .embed iframe {
+      display: block;
+      width: 100%;
+      min-height: 80px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .vinyl {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .platter {
+        width: min(88vw, 360px);
+      }
+
+      .controls {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .play {
+        font-size: 1rem;
+        padding-inline: 1.25rem;
+      }
+    }
+  `,
+})
+export class Turntable {
+  private readonly playlist = inject(PlaylistService);
+  private readonly embed = inject(SpotifyEmbedService);
+  private readonly holder = viewChild.required<ElementRef<HTMLElement>>('holder');
+  private controller?: SpotifyController;
+
+  protected readonly track = this.playlist.selected;
+  protected readonly playing = signal(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly cover = signal<string | null>(null);
+  protected readonly recordStyle = computed(() => {
+    const artwork = this.cover();
+    return artwork ? `url("${artwork}")` : '';
+  });
+  private pendingPlay = false;
+
+  constructor() {
+    afterNextRender(() => {
+      const current = this.track();
+      this.embed
+        .createController(
+          this.holder().nativeElement,
+          current ? uri(current.id) : playlistUri(),
+          (event) => {
+            this.playing.set(!event.data.isPaused && !event.data.isBuffering);
+            const artwork = event.data.track?.imageUri ?? event.data.track?.album?.imageUri;
+            if (artwork) {
+              this.cover.set(artwork);
+            }
+          },
+        )
+        .then((controller) => {
+          this.controller = controller;
+          const currentTrack = this.track();
+          if (currentTrack) {
+            controller.loadUri(uri(currentTrack.id));
+          }
+          if (this.pendingPlay || !currentTrack) {
+            this.pendingPlay = false;
+            controller.play();
+          }
+        })
+        .catch(() => this.error.set('Spotify-Player konnte nicht geladen werden.'));
+    });
+
+    effect(() => {
+      const track = this.track();
+      if (track) {
+        this.controller?.loadUri(uri(track.id));
+        const selectedId = track.id;
+        this.embed.getTrackArtwork(selectedId).then((artwork) => {
+          if (this.track()?.id === selectedId && artwork) {
+            this.cover.set(artwork);
+          }
+        });
+      }
+    });
+  }
+
+  protected toggle(): void {
+    if (!this.controller) {
+      this.pendingPlay = true;
+      return;
+    }
+    this.controller.togglePlay();
+  }
+}
+
+function uri(id: string | undefined): string {
+  return id ? `spotify:track:${id}` : '';
+}
+
+function playlistUri(): string {
+  return `spotify:playlist:${SPOTIFY_PLAYLIST_ID}`;
+}
