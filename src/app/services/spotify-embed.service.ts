@@ -50,21 +50,6 @@ export class SpotifyEmbedService {
     );
   }
 
-  async getTrackArtwork(trackId: string): Promise<string | null> {
-    try {
-      const response = await fetch(
-        `https://open.spotify.com/oembed?url=${encodeURIComponent(`https://open.spotify.com/track/${trackId}`)}`,
-      );
-      if (!response.ok) {
-        return null;
-      }
-      const data = (await response.json()) as { thumbnail_url?: unknown };
-      return typeof data.thumbnail_url === 'string' ? data.thumbnail_url : null;
-    } catch {
-      return null;
-    }
-  }
-
   private load(): Promise<SpotifyIFrameApi> {
     this.api ??= new Promise<SpotifyIFrameApi>((resolve, reject) => {
       (window as unknown as { onSpotifyIframeApiReady: (api: SpotifyIFrameApi) => void })

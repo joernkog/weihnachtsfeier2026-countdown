@@ -5,13 +5,11 @@ import {
   OnDestroy,
   afterNextRender,
   computed,
-  effect,
   inject,
   signal,
   viewChild,
 } from '@angular/core';
 import { SPOTIFY_PLAYLIST_ID } from '../config';
-import { PlaylistService } from '../services/playlist.service';
 import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embed.service';
 
 @Component({
@@ -36,12 +34,7 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
       <div class="platter" [class.spinning]="playing()">
         <div class="vinyl" [style.background-image]="recordStyle()">
           <div class="grooves"></div>
-          <div class="label">
-            @if (track(); as t) {
-              <strong>{{ t.title }}</strong>
-              <span>{{ t.artist }}</span>
-            }
-          </div>
+          <div class="label" aria-hidden="true"></div>
           <div class="spindle"></div>
         </div>
         <div class="arm" [class.on-record]="playing()">
@@ -256,12 +249,15 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     .embed {
       width: min(100%, 460px);
       min-width: 0;
+      height: 80px;
+      overflow: hidden;
     }
 
     .embed > div,
     .embed iframe {
       display: block;
       width: 100%;
+      height: 80px;
     }
 
     @keyframes spin {
@@ -294,12 +290,10 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
   `,
 })
 export class Turntable implements OnDestroy {
-  private readonly playlist = inject(PlaylistService);
   private readonly embed = inject(SpotifyEmbedService);
   private readonly holder = viewChild.required<ElementRef<HTMLElement>>('holder');
   private controller?: SpotifyController;
 
-  protected readonly track = this.playlist.selected;
   protected readonly playing = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly cover = signal<string | null>(null);
@@ -312,11 +306,10 @@ export class Turntable implements OnDestroy {
 
   constructor() {
     afterNextRender(() => {
-      const current = this.track();
       this.embed
         .createController(
           this.holder().nativeElement,
-          current ? uri(current.id) : playlistUri(),
+          playlistUri(),
           (event) => {
             this.playing.set(!event.data.isPaused && !event.data.isBuffering);
             const artwork = event.data.track?.imageUri ?? event.data.track?.album?.imageUri;
@@ -327,16 +320,12 @@ export class Turntable implements OnDestroy {
         )
         .then((controller) => {
           this.controller = controller;
-          const currentTrack = this.track();
-          if (currentTrack) {
-            controller.loadUri(uri(currentTrack.id));
-          }
-          if (this.pendingPlay || !currentTrack) {
+            if (this.pendingPlay) {
             this.pendingPlay = false;
             controller.play();
           }
           this.refreshTimer = setInterval(() => {
-            if (!this.track()) {
+            if (!this.playing()) {
               controller.loadUri(playlistUri());
             }
           }, 30_000);
@@ -344,18 +333,6 @@ export class Turntable implements OnDestroy {
         .catch(() => this.error.set('Spotify-Player konnte nicht geladen werden.'));
     });
 
-    effect(() => {
-      const track = this.track();
-      if (track) {
-        this.controller?.loadUri(uri(track.id));
-        const selectedId = track.id;
-        this.embed.getTrackArtwork(selectedId).then((artwork) => {
-          if (this.track()?.id === selectedId && artwork) {
-            this.cover.set(artwork);
-          }
-        });
-      }
-    });
   }
 
   protected toggle(): void {
@@ -371,10 +348,6 @@ export class Turntable implements OnDestroy {
       clearInterval(this.refreshTimer);
     }
   }
-}
-
-function uri(id: string | undefined): string {
-  return id ? `spotify:track:${id}` : '';
 }
 
 function playlistUri(): string {
