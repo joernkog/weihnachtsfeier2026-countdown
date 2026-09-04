@@ -46,7 +46,7 @@ import { PlaylistService } from '../services/playlist.service';
       color: var(--ivory);
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 248, 235, 0.18);
-      border-radius: 0.25rem;
+      border-radius: 0.5rem;
       font-weight: 500;
       line-height: 1.2;
       transition:
@@ -103,7 +103,7 @@ import { PlaylistService } from '../services/playlist.service';
       align-items: stretch;
       gap: 0.3rem;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 0.4rem;
+      border-radius: 0.5rem;
       background: rgba(0, 0, 0, 0.35);
     }
 

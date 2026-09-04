@@ -121,7 +121,7 @@ interface Snowflake {
       color: var(--ivory);
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 248, 235, 0.18);
-      border-radius: 0.25rem;
+      border-radius: 0.5rem;
       font: inherit;
       font-weight: 500;
       cursor: pointer;

@@ -48,7 +48,7 @@ import { PARTY_DATE } from '../config';
       padding: 0.7rem 0.3rem;
       background: linear-gradient(180deg, #14161a, #0a0b0d);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 0.6rem;
+      border-radius: 0.5rem;
       box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.8);
     }
 
