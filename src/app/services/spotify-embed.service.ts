@@ -43,6 +43,7 @@ export class SpotifyEmbedService {
       (api) =>
         new Promise<SpotifyController>((resolve) => {
           api.createController(element, { uri, width: '100%', height: '80' }, (controller) => {
+            element.querySelector('iframe')?.setAttribute('loading', 'lazy');
             controller.addListener('playback_update', onPlaybackUpdate);
             resolve(controller);
           });
