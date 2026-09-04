@@ -18,6 +18,7 @@ import { PlaylistService } from '../services/playlist.service';
           <small>Spotify-Playlist mit dem Handy öffnen</small>
         </span>
       </a>
+      <p class="sync-note">Neue Songs aus der Playlist erscheinen mit etwas Verzögerung im Player.</p>
     </section>
   `,
   styles: `
@@ -86,6 +87,14 @@ import { PlaylistService } from '../services/playlist.service';
 
     .qr-card small {
       display: none;
+    }
+
+    .sync-note {
+      margin: 0;
+      color: rgba(255, 248, 235, 0.62);
+      font-size: 1rem;
+      padding: 0.5rem 0rem;
+      line-height: 1.4;
     }
 
     .tracks {
