@@ -22,7 +22,13 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
 
       <div class="controls">
         <button type="button" class="play" (click)="toggle()">
-          {{ playing() ? '❚❚ Pause' : '▶ Play' }}
+          @if (playing()) {
+            <span class="play-icon" aria-hidden="true">❚❚</span>
+            <span>Pause</span>
+          } @else {
+            <span class="play-icon" aria-hidden="true">▶</span>
+            <span>Play</span>
+          }
         </button>
       </div>
 
@@ -205,9 +211,13 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     }
 
     .play {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
       font-family: var(--font-display);
       font-size: 1.2rem;
-      padding: 0.6rem 1.6rem;
+      padding: 0.5rem 1.5rem;
       color: #04120b;
       font-weight: 500;
       background: var(--neon);
@@ -216,12 +226,24 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
       cursor: pointer;
       box-shadow: 0 0 22px rgba(var(--neon-rgb), 0.5);
       will-change: box-shadow;
+      transition: box-shadow 160ms ease;
+    }
+
+    .play-icon {
+      display: inline-block;
+      line-height: 1;
     }
 
     .play:disabled {
       opacity: 0.35;
       cursor: not-allowed;
       box-shadow: none;
+    }
+
+    .play:hover:not(:disabled),
+    .play:focus-visible {
+      outline: none;
+      box-shadow: 0 0 30px rgba(var(--neon-rgb), 0.72);
     }
 
     .error {
