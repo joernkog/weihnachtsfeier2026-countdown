@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  OnDestroy,
   afterNextRender,
   computed,
   effect,
@@ -292,7 +293,7 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     }
   `,
 })
-export class Turntable {
+export class Turntable implements OnDestroy {
   private readonly playlist = inject(PlaylistService);
   private readonly embed = inject(SpotifyEmbedService);
   private readonly holder = viewChild.required<ElementRef<HTMLElement>>('holder');
@@ -307,6 +308,7 @@ export class Turntable {
     return artwork ? `url("${artwork}")` : '';
   });
   private pendingPlay = false;
+  private refreshTimer?: ReturnType<typeof setInterval>;
 
   constructor() {
     afterNextRender(() => {
@@ -333,6 +335,11 @@ export class Turntable {
             this.pendingPlay = false;
             controller.play();
           }
+          this.refreshTimer = setInterval(() => {
+            if (!this.track()) {
+              controller.loadUri(playlistUri());
+            }
+          }, 30_000);
         })
         .catch(() => this.error.set('Spotify-Player konnte nicht geladen werden.'));
     });
@@ -357,6 +364,12 @@ export class Turntable {
       return;
     }
     this.controller.togglePlay();
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
   }
 }
 
