@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
-type EffectId = 'confetti' | 'snow';
+type EffectId = 'confetti' | 'snow' | 'bass-drop';
 
 interface Effect {
   readonly id: EffectId;
@@ -41,7 +41,7 @@ interface Snowflake {
             class="effect-button"
             [class.active]="active(effect.id)"
             [attr.aria-pressed]="active(effect.id)"
-            (click)="toggle(effect.id)"
+            (click)="effect.id === 'bass-drop' ? triggerBassDrop() : toggle(effect.id)"
           >
             <span>{{ effect.label }}</span>
             <span class="status" aria-hidden="true"></span>
@@ -79,6 +79,10 @@ interface Snowflake {
         }
       </div>
     }
+
+    @if (active('bass-drop')) {
+      <div class="bass-drop-effect" aria-hidden="true"></div>
+    }
   `,
   styles: `
     :host {
@@ -103,7 +107,7 @@ interface Snowflake {
 
     .effect-buttons {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.65rem;
     }
 
@@ -111,7 +115,7 @@ interface Snowflake {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.55rem;
+      gap: 0.6rem;
       min-height: 3rem;
       padding: 0.65rem 0.8rem;
       color: var(--ivory);
@@ -119,14 +123,15 @@ interface Snowflake {
       border: 1px solid rgba(255, 248, 235, 0.18);
       border-radius: 0.25rem;
       font: inherit;
-      font-weight: 600;
-      line-height: 1.2;
+      font-weight: 500;
       cursor: pointer;
       transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
     }
 
     .effect-button:hover,
     .effect-button:focus-visible {
+      color: var(--neon);
+      background: rgba(var(--neon-rgb), 0.08);
       border-color: var(--neon);
       outline: none;
     }
@@ -182,6 +187,16 @@ interface Snowflake {
       animation: snow-fall var(--duration) linear var(--delay) infinite;
     }
 
+    .bass-drop-effect {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      border: 6px solid rgba(var(--hot-rgb), 0.98);
+      background: radial-gradient(circle, rgba(var(--hot-rgb), 0.38), transparent 62%);
+      animation: bass-drop-shake 500ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
     .confetti-piece {
       position: absolute;
       top: -5vh;
@@ -204,15 +219,22 @@ interface Snowflake {
       100% { transform: translate3d(var(--drift), 110vh, 0) rotate(360deg); }
     }
 
+    @keyframes bass-drop-shake {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 5px, 0); }
+      40%, 60% { transform: translate3d(6px, -5px, 0); }
+    }
+
     @media (max-width: 680px) {
       .effect-buttons {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .effect-button {
         min-width: 0;
-        padding-inline: 0.45rem;
-        font-size: 0.88rem;
+        padding-inline: 0.6rem;
+        font-size: 0.8rem;
       }
 
     }
@@ -225,6 +247,10 @@ interface Snowflake {
       .snowflake {
         animation: none;
       }
+
+      .bass-drop-effect {
+        animation: none;
+      }
     }
   `,
 })
@@ -232,13 +258,14 @@ export class Effects {
   protected readonly effects: readonly Effect[] = [
     { id: 'confetti', label: 'Konfetti' },
     { id: 'snow', label: 'Schnee' },
+    { id: 'bass-drop', label: 'Alarm' },
   ];
 
   protected readonly confetti: readonly ConfettiPiece[] = Array.from({ length: 34 }, (_, index) => ({
     x: `${(index * 31) % 103 - 2}%`,
     delay: `${-((index * 0.37) % 7)}s`,
     duration: `${5.5 + ((index * 0.23) % 3)}s`,
-    color: ['#ff4168', 'var(--neon)', '#ffd98a', '#fff8eb'][index % 4],
+    color: ['#ff4168', 'var(--neon)', '#fff8eb', '#fff8eb'][index % 4],
     rotation: `${90 + ((index * 47) % 270)}deg`,
   }));
 
@@ -255,6 +282,7 @@ export class Effects {
   private readonly state = signal<Record<EffectId, boolean>>({
     confetti: false,
     snow: false,
+    'bass-drop': false,
   });
 
   protected active(id: EffectId): boolean {
@@ -263,5 +291,21 @@ export class Effects {
 
   protected toggle(id: EffectId): void {
     this.state.update((state) => ({ ...state, [id]: !state[id] }));
+  }
+
+  protected triggerBassDrop(): void {
+    this.state.update((state) => ({ ...state, 'bass-drop': true }));
+    document.body.classList.add('bass-drop');
+    this.playBassTone();
+    window.setTimeout(() => {
+      this.state.update((state) => ({ ...state, 'bass-drop': false }));
+      document.body.classList.remove('bass-drop');
+    }, 500);
+  }
+
+  private playBassTone(): void {
+    const audio = new Audio('/bass-drop.mp3');
+    audio.volume = 0.6;
+    void audio.play().catch(() => undefined);
   }
 }

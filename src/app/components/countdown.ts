@@ -10,9 +10,6 @@ import { PARTY_DATE } from '../config';
         <h2>Countdown</h2>
       </header>
       <p class="date">{{ date }}</p>
-      @if (over()) {
-        <p class="over">Die Ampel ist aus — LOS GEHT’S!</p>
-      } @else {
         <div class="digits">
           @for (part of parts(); track part.label) {
             <div class="digit">
@@ -21,7 +18,6 @@ import { PARTY_DATE } from '../config';
             </div>
           }
         </div>
-      }
     </section>
   `,
   styles: `
@@ -67,10 +63,8 @@ import { PARTY_DATE } from '../config';
     }
 
     .label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 0.8rem;
+      font-weight: 500;
     }
 
     .over {
@@ -82,7 +76,6 @@ import { PARTY_DATE } from '../config';
 
     .date {
       margin: 0;
-      font-weight: 500;
       line-height: var(--text-body-line);
     }
   `,
@@ -101,9 +94,9 @@ export class Countdown implements OnDestroy {
     const total = Math.max(0, Math.floor(this.remaining() / 1000));
     return [
       { label: 'Tage', value: pad(Math.floor(total / 86400)) },
-      { label: 'Std', value: pad(Math.floor(total / 3600) % 24) },
-      { label: 'Min', value: pad(Math.floor(total / 60) % 60) },
-      { label: 'Sek', value: pad(total % 60) },
+      { label: 'Stunden', value: pad(Math.floor(total / 3600) % 24) },
+      { label: 'Minuten', value: pad(Math.floor(total / 60) % 60) },
+      { label: 'Sekunden', value: pad(total % 60) },
     ];
   });
 

@@ -14,7 +14,7 @@ import { PlaylistService } from '../services/playlist.service';
       <a class="qr-card" [href]="playlistUrl" target="_blank" rel="noopener noreferrer">
         <img [src]="qrCodeUrl" alt="QR-Code zum Hinzufügen von Songs zur Spotify-Playlist" />
         <span>
-          <strong>Song hinzufügen</strong>
+          <p>Song hinzufügen</p>
           <small>Spotify-Playlist mit dem Handy öffnen</small>
         </span>
       </a>
@@ -39,7 +39,7 @@ import { PlaylistService } from '../services/playlist.service';
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 0.65rem;
+      gap: 1rem;
       margin-bottom: 1rem;
       min-height: 7.5rem;
       padding: 0.8rem;
@@ -47,7 +47,7 @@ import { PlaylistService } from '../services/playlist.service';
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 248, 235, 0.18);
       border-radius: 0.25rem;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.2;
       transition:
         border-color 160ms ease,
@@ -55,8 +55,11 @@ import { PlaylistService } from '../services/playlist.service';
         color 160ms ease;
     }
 
-    .qr-card:hover {
+    .qr-card:hover,
+    .qr-card:focus-visible {
+      background: rgba(var(--neon-rgb), 0.08);
       border-color: var(--neon);
+      outline: none;
       text-decoration: none;
     }
 
@@ -75,7 +78,7 @@ import { PlaylistService } from '../services/playlist.service';
       gap: 0.25rem;
     }
 
-    .qr-card strong {
+    .qr-card p {
       color: inherit;
       font-size: 1rem;
       line-height: 1.25;
@@ -139,7 +142,7 @@ import { PlaylistService } from '../services/playlist.service';
     }
 
     .drop:hover {
-      color: var(--hot);
+      color: var(--neon);
     }
 
     .empty {

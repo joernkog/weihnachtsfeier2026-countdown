@@ -5,17 +5,17 @@
   --neon: #00ef8b;
   --neon-rgb: 0, 239, 139;
   --hot: #ff4168;
-  --gold: #ffd98a;
+  --hot-rgb: 255, 65, 104;
   --ivory: #fff8eb;
   --font-headline: 'Fugaz One', sans-serif;
   --font-display: var(--font-ui);
   --font-ui: 'Space Grotesk', sans-serif;
   --text-body-size: 1rem;
   --text-body-line: 1.5;
-  --heading-size: clamp(1.4rem, 3vw, 2rem);
+  --heading-size: clamp(1.5rem, 2rem, 3rem);
   --heading-line: 1.2;
-  --space-panel: clamp(1rem, 2.5vw, 1.6rem);
-  --space-stack: clamp(1rem, 2.5vw, 2rem);
+  --space-panel: clamp(1rem, 1.5rem, 1.5rem);
+  --space-stack: clamp(1rem, 2rem, 2rem);
 }
 
 * {
@@ -32,8 +32,8 @@ body {
   background:
     radial-gradient(circle at 50% -10%, #24533a, var(--bg) 58%),
     radial-gradient(circle at 12% 20%, rgba(255, 65, 104, 0.13) 0 1px, transparent 1px 88px),
-    radial-gradient(circle at 80% 12%, rgba(255, 217, 138, 0.15) 0 1px, transparent 1px 110px),
-    linear-gradient(120deg, rgba(255, 217, 138, 0.08), transparent 35%), var(--bg);
+    radial-gradient(circle at 80% 12%, rgba(var(--neon-rgb), 0.15) 0 1px, transparent 1px 110px),
+    linear-gradient(120deg, rgba(var(--neon-rgb), 0.08), transparent 35%), var(--bg);
   color: var(--ivory);
   font-family: var(--font-ui);
   font-size: var(--text-body-size);
@@ -58,7 +58,7 @@ h2 {
   position: relative;
   padding: var(--space-panel);
   background: linear-gradient(145deg, rgba(22, 48, 36, 0.92), rgba(9, 20, 15, 0.96));
-  border: 1px solid rgba(255, 217, 138, 0.38);
+  border: 1px solid rgba(255, 248, 235, 0.2);
   border-radius: 1rem;
   backdrop-filter: blur(10px);
   box-shadow:

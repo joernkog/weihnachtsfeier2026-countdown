@@ -34,12 +34,12 @@ interface Car {
               <path d="M8 39h19M153 39h20" stroke="#080908" stroke-width="2" />
               <path d="M7 39l-5 3h22M173 39l5 3h-22" fill="none" stroke="#070807" stroke-width="2" />
               <path d="M43 34q0 12 12 12t12-12M119 34q0 12 12 12t12-12" fill="#080908" />
-              <circle cx="54" cy="39" r="8" fill="#0a0b0a" stroke="#aaa18d" stroke-width="1.5" />
-              <circle cx="54" cy="39" r="3" fill="#d8c99f" />
-              <circle cx="131" cy="39" r="8" fill="#0a0b0a" stroke="#aaa18d" stroke-width="1.5" />
-              <circle cx="131" cy="39" r="3" fill="#d8c99f" />
+              <circle cx="54" cy="39" r="8" fill="#0a0b0a" stroke="#8b938e" stroke-width="1.5" />
+              <circle cx="54" cy="39" r="3" fill="#d9e8df" />
+              <circle cx="131" cy="39" r="8" fill="#0a0b0a" stroke="#8b938e" stroke-width="1.5" />
+              <circle cx="131" cy="39" r="3" fill="#d9e8df" />
               <path d="M162 29h8" stroke="#fff1bf" stroke-width="2.5" stroke-linecap="round" />
-              <path d="M10 29h9" stroke="#d8c99f" stroke-width="2" stroke-linecap="round" />
+              <path d="M10 29h9" stroke="#d9e8df" stroke-width="2" stroke-linecap="round" />
               <path d="M25 28l16-2M144 26l18 2" stroke="rgba(255,255,255,.5)" stroke-width="1" />
             </svg>
           </div>
@@ -143,9 +143,9 @@ interface Car {
 })
 export class Street {
   protected readonly cars: Car[] = [
-    { color: '#c7c4bb', highlight: '#fff3c7', duration: '2.35s', delay: '-0.05s', scale: '1', lane: '8px' },
+    { color: '#c7c4bb', highlight: '#d9e8df', duration: '2.35s', delay: '-0.05s', scale: '1', lane: '8px' },
     { color: '#4b504c', highlight: '#d9d1b8', duration: '3.1s', delay: '-0.9s', scale: '0.8', lane: '46px' },
-    { color: '#8b7553', highlight: '#fff3c7', duration: '2.65s', delay: '-1.7s', scale: '1.1', lane: '6px' },
+    { color: '#6d716c', highlight: '#d9e8df', duration: '2.65s', delay: '-1.7s', scale: '1.1', lane: '6px' },
     { color: '#6d716c', highlight: '#e6ddc5', duration: '3.55s', delay: '-2.25s', scale: '0.7', lane: '50px' },
     { color: '#e1ded4', highlight: '#fff7db', duration: '2.15s', delay: '-1.25s', scale: '0.9', lane: '26px' },
     { color: '#353a36', highlight: '#d4c29a', duration: '2.9s', delay: '-2.65s', scale: '1', lane: '14px' },

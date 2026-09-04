@@ -201,8 +201,7 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     .controls {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      margin: 1rem 0;
+      margin-bottom: 1.5rem;
     }
 
     .play {
@@ -234,14 +233,12 @@ import { SpotifyController, SpotifyEmbedService } from '../services/spotify-embe
     .embed {
       width: min(100%, 460px);
       min-width: 0;
-      min-height: 80px;
     }
 
     .embed > div,
     .embed iframe {
       display: block;
       width: 100%;
-      min-height: 80px;
     }
 
     @keyframes spin {
